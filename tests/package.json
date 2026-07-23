@@ -1,0 +1,8 @@
+{
+  "name": "causality-tests",
+  "private": true,
+  "description": "Development dependency for the browser test suite. Install with npm install inside this folder, then run the suite from the project root.",
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  }
+}

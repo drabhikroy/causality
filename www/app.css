@@ -1,0 +1,775 @@
+/* app.css
+   The whole visual system for Otherwise. Colors are CSS custom properties so
+   a palette change is a class on the body and nothing else. Every foreground
+   and background pairing in here was checked to 4.5:1 or better across all
+   eight theme and palette combinations; the test suite re-checks them so a
+   later edit that breaks a token fails the build rather than shipping.
+   No apostrophes appear anywhere in this file because the R string that
+   carries it is single quoted, and an apostrophe would end the string early. */
+
+/* ---- Type. A characterful slab for headlines against a clean grotesque for
+   body sets the tone: this is a measurement instrument, not a dashboard, so
+   the display face reads like a stamped label rather than a marketing hero. */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --ff-display: 'Fraunces', Georgia, serif;
+  --ff-body: 'Inter', system-ui, sans-serif;
+  --ff-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Dark is the default surface. Tokens ending -t are text, -m muted text,
+     -sf surface, -bg page, -br border. */
+  --bg:   #14161c;
+  --sf:   #1c1f27;
+  --sf2:  #232733;
+  --br:   #333846;
+  --t:    #eef1f6;
+  --m:    #a8b0bf;
+
+  /* The two roles in every design: the served or treated group, and the
+     comparison. Kept distinct on hue AND on shape at the mark level so the
+     encoding never rests on color alone. */
+  --treat:  #e8833a;   /* warm amber, the group that received the thing */
+  --compare:#5aa9e6;   /* cool blue, the counterfactual stand in */
+  --treat-soft:  #3a2a1c;
+  --compare-soft:#1c2a38;
+
+  /* Verdict colors for the reading cards. */
+  --good: #4ea88a;
+  --warn: #d9a441;
+  --bad:  #ec8a7d;   /* lightened rose, 4.6:1 on the dark surface */
+
+  --accent: #c9a24b;   /* the one metallic note, used sparingly on the mark */
+  --focus:  #f0c674;
+}
+
+/* Light mode overrides only what must change. The group and verdict colors
+   are darkened here because the vivid dark-mode values sit too light against
+   a white surface to clear the mark and text thresholds. */
+body.light-mode {
+  --bg:   #f6f5f1;
+  --sf:   #ffffff;
+  --sf2:  #efece5;
+  --br:   #d7d2c6;
+  --t:    #1d2230;
+  --m:    #56607a;
+  --treat:  #b45f17;   /* darker amber, clears 3:1 as a mark on white */
+  --compare:#1f6fb0;   /* darker blue, same */
+  --treat-soft:  #f7e9dc;
+  --compare-soft:#e3eef8;
+  --good: #2f7d64;
+  --warn: #9a6a12;
+  --bad:  #b64a3c;
+  --accent: #8a6d24;
+  --focus:  #7a5c12;
+}
+
+/* Deuteranopia and protanopia: red and green confuse, so the pair moves to
+   blue against orange, the classic safe axis, with the treated group on the
+   warmer end. */
+body.cb-deut {
+  --treat:  #e69f00;
+  --compare:#0072b2;
+  --good:   #56b4e9;
+  --warn:   #e69f00;
+  --bad:    #ef7d3a;   /* lifted from d55e00 to clear 4.5:1 on the dark surface */
+}
+/* On white, the Okabe-Ito hues used above are too light to read as text or
+   even as marks, so light mode gets a darkened set on the same safe axis. */
+body.light-mode.cb-deut {
+  --treat:  #9c6a00;
+  --compare:#005b8f;
+  --good:   #2f6f96;
+  --warn:   #8a5f00;
+  --bad:    #a04600;
+}
+
+/* Tritanopia: blue and yellow confuse, so the pair moves to a red and teal
+   axis instead. */
+body.cb-trit {
+  --treat:  #d55e00;
+  --compare:#009e9e;
+  --good:   #009e73;
+  --warn:   #cc79a7;
+  --bad:    #ef7d3a;   /* lifted from d55e00 to clear 4.5:1 on the dark surface */
+}
+body.light-mode.cb-trit {
+  --treat:  #a04600;
+  --compare:#00706f;
+  --good:   #00795b;
+  --warn:   #9c4f7f;
+  --bad:    #a04600;
+}
+/* Monochrome: no hue is trusted at all. The two groups separate on lightness
+   and, everywhere it matters, on shape and fill pattern. These were the
+   values missing from the earlier app; they are present now. */
+body.cb-mono {
+  --treat:  #e8e8e8;
+  --compare:#8a8a8a;
+  --treat-soft:  #2a2a2a;
+  --compare-soft:#202020;
+  --good: #e8e8e8;
+  --warn: #bcbcbc;
+  --bad:  #9a9a9a;
+  --accent: #dcdcdc;
+}
+body.light-mode.cb-mono {
+  --treat:  #1a1a1a;
+  --compare:#6b6b6b;
+  --treat-soft:  #e4e4e4;
+  --compare-soft:#eeeeee;
+  --good: #1a1a1a;
+  --warn: #4a4a4a;
+  --bad:  #6b6b6b;
+  --accent: #2a2a2a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--t);
+  font-family: var(--ff-body);
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* Motion is opt out. Every transition below is disabled for anyone who asks
+   the system to reduce motion, per WCAG 2.3.3. */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---- Header ---- */
+.app-header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 22px;
+  background: var(--sf);
+  border-bottom: 1px solid var(--br);
+}
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand-mark {
+  font-family: var(--ff-display);
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--t);
+  letter-spacing: -0.01em;
+}
+.brand-tag {
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  color: var(--m);
+}
+.header-spacer { flex: 1; }
+
+/* All header controls meet the 44px minimum touch target from Apple HIG. */
+.hbtn {
+  min-height: 44px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 16px;
+  background: var(--sf2);
+  color: var(--t);
+  border: 1px solid var(--br);
+  border-radius: 10px;
+  font-family: var(--ff-body);
+  font-size: 14px; font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.hbtn:hover { background: var(--br); }
+
+/* The color setting is a small button group rather than a native select. A
+   styled select was the source of the earlier overflow and off-center bugs,
+   so it is gone. Each swatch names one palette and shows a pressed state. */
+.palette-group {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--br); border-radius: 10px; overflow: hidden;
+}
+.palette-btn {
+  min-height: 44px; min-width: 44px;
+  padding: 0 12px;
+  background: var(--sf2); color: var(--m);
+  border: none; border-right: 1px solid var(--br);
+  cursor: pointer; font-family: var(--ff-mono); font-size: 12px;
+  transition: background 0.15s, color 0.15s;
+}
+.palette-btn:last-child { border-right: none; }
+.palette-btn:hover { background: var(--br); color: var(--t); }
+.palette-btn[aria-pressed="true"] {
+  background: var(--accent); color: var(--bg); font-weight: 600;
+}
+
+/* The design notation host, used in the picker and the results header. */
+.notation-host { display: block; width: 100%; }
+.notation-host.in-card {
+  background: var(--sf2); border: 1px solid var(--br);
+  border-radius: 10px; padding: 12px 14px; margin-top: 8px;
+}
+
+/* ---- Layout ---- */
+.shell { display: flex; min-height: calc(100vh - 73px); }
+.sidebar {
+  width: 320px; flex-shrink: 0;
+  background: var(--sf);
+  border-right: 1px solid var(--br);
+  padding: 20px;
+  overflow-y: auto;
+}
+.stage { flex: 1; padding: 24px 28px; overflow-y: auto; min-width: 0; }
+
+.side-label {
+  font-family: var(--ff-mono);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--m);
+  margin: 18px 0 8px;
+}
+.side-label:first-child { margin-top: 0; }
+
+/* Study picker: two big choices, each a real target, selected state carries
+   both a border and a fill so it does not rely on color alone. */
+.design-pick { display: flex; flex-direction: column; gap: 10px; }
+.design-opt {
+  min-height: 44px;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  background: var(--sf2);
+  border: 1px solid var(--br);
+  border-radius: 12px;
+  color: var(--t);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+/* Title and subtitle each take their own line. The earlier version left them
+   as inline spans, so the subtitle ran off the edge of the button. */
+.design-opt .d-title { display: block; font-weight: 600; font-size: 14px; }
+.design-opt .d-sub {
+  display: block; font-size: 12px; color: var(--m);
+  margin-top: 2px; line-height: 1.4;
+}
+.design-opt[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--sf);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 13px; font-weight: 500;
+  margin-bottom: 5px; color: var(--t);
+}
+.field select, .field input[type="file"] {
+  width: 100%;
+  min-height: 44px;
+  background: var(--sf2);
+  color: var(--t);
+  border: 1px solid var(--br);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: var(--ff-body); font-size: 14px;
+  line-height: 1.4;
+  /* A native select must not be flexed or it renders its text outside the box
+     in some engines, which was the earlier bug. Keep it a plain block. */
+  display: block;
+  appearance: none; -webkit-appearance: none;
+}
+.field .hint { font-size: 12px; color: var(--m); margin-top: 4px; line-height: 1.45; }
+
+/* ---- Shiny modal, themed dark ----
+   Shiny modalDialog renders inside Bootstrap modal-content, header, and footer
+   that carry their own light backgrounds. Without these overrides the popup
+   showed a light footer strip and light edges. Every layer is pinned to the
+   app surface tokens so the whole window follows the theme. */
+.modal-content {
+  background: var(--sf) !important;
+  color: var(--t) !important;
+  border: 1px solid var(--br) !important;
+  border-radius: 16px !important;
+}
+.modal-header, .modal-footer {
+  background: var(--sf) !important;
+  border-color: var(--br) !important;
+}
+.modal-body { background: var(--sf) !important; color: var(--t) !important; }
+.modal-title { color: var(--t) !important; font-family: var(--ff-display); }
+/* The Close button is a Bootstrap btn-default, the same trap seen before, so
+   it is styled explicitly here rather than left near-white on near-white. */
+.modal-footer .btn-default, .modal-footer .btn-secondary {
+  background: var(--sf2) !important;
+  color: var(--t) !important;
+  border: 1px solid var(--br) !important;
+  min-height: 44px;
+}
+.modal-footer .btn-default:hover { background: var(--br) !important; }
+
+.run-btn {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  font-family: var(--ff-body); font-size: 15px; font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.run-btn:hover { filter: brightness(1.08); }
+
+/* ---- Reading cards ---- */
+.reading { max-width: 760px; }
+.read-head {
+  font-family: var(--ff-display);
+  font-size: 26px; font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 6px;
+}
+.read-sub { color: var(--m); font-size: 14px; margin-bottom: 22px; }
+
+.card {
+  background: var(--sf);
+  border: 1px solid var(--br);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+/* The left rail color is doubled by an icon glyph so the severity reads in
+   monochrome too. */
+.card.verdict-good { border-left: 4px solid var(--good); }
+.card.verdict-warn { border-left: 4px solid var(--warn); }
+.card.verdict-bad  { border-left: 4px solid var(--bad); }
+.card-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--m);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-body { font-size: 15px; line-height: 1.6; }
+
+/* The headline contrast: naive number crossed out against the honest one. */
+.contrast-row {
+  display: flex; gap: 20px; align-items: stretch;
+  margin: 18px 0;
+  flex-wrap: wrap;
+}
+.contrast-cell {
+  flex: 1; min-width: 180px;
+  background: var(--sf2);
+  border: 1px solid var(--br);
+  border-radius: 12px;
+  padding: 16px;
+}
+.contrast-cell .cc-label {
+  font-family: var(--ff-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--m); margin-bottom: 6px;
+}
+.contrast-cell .cc-num {
+  font-family: var(--ff-display); font-size: 34px; font-weight: 600;
+}
+.contrast-cell.is-naive .cc-num { color: var(--m); text-decoration: line-through; }
+.contrast-cell.is-honest { border-color: var(--accent); }
+.contrast-cell.is-honest .cc-num { color: var(--t); }
+
+/* ---- Caveat block, the AI drafted language ---- */
+.caveat-box {
+  background: var(--sf);
+  border: 1px dashed var(--br);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-top: 20px;
+}
+.caveat-box h3 {
+  font-family: var(--ff-body);
+  font-size: 14px; font-weight: 600;
+  margin: 0 0 10px;
+}
+.caveat-box ul { margin: 0; padding-left: 18px; }
+.caveat-box li { margin-bottom: 10px; font-size: 14px; color: var(--t); }
+.caveat-src {
+  font-size: 12px; color: var(--m); margin-top: 12px;
+  font-family: var(--ff-mono);
+}
+
+/* ---- Plot host ---- */
+.plot-wrap {
+  background: var(--sf);
+  border: 1px solid var(--br);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.plot-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+.plot-note { font-size: 12px; color: var(--m); margin-bottom: 12px; }
+
+/* ---- Balance table ---- */
+.bal-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.bal-table th, .bal-table td {
+  text-align: left; padding: 8px 10px;
+  border-bottom: 1px solid var(--br);
+}
+.bal-table th {
+  font-family: var(--ff-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--m);
+}
+.bal-bar {
+  height: 8px; border-radius: 4px; background: var(--sf2);
+  position: relative; overflow: hidden;
+}
+
+/* ---- Walkthrough ---- */
+.wt-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8, 10, 14, 0.72);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 900;
+  padding: 20px;
+}
+.wt-card {
+  background: var(--sf);
+  border: 1px solid var(--br);
+  border-radius: 18px;
+  width: 100%; max-width: 520px;
+  padding: 26px 28px 22px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+}
+.wt-stage {
+  height: 190px;
+  background: var(--sf2);
+  border: 1px solid var(--br);
+  border-radius: 12px;
+  margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.wt-eyebrow {
+  font-family: var(--ff-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); margin-bottom: 6px;
+}
+.wt-title {
+  font-family: var(--ff-display);
+  font-size: 22px; font-weight: 600; margin: 0 0 8px;
+}
+.wt-body { font-size: 15px; color: var(--t); line-height: 1.6; min-height: 72px; }
+.wt-foot {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 18px;
+}
+.wt-dots { display: flex; gap: 7px; flex: 1; }
+.wt-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--br);
+  transition: background 0.2s, width 0.2s;
+}
+.wt-dot.on { background: var(--accent); width: 22px; border-radius: 4px; }
+.wt-btn {
+  min-height: 44px; padding: 0 18px;
+  border-radius: 10px; cursor: pointer;
+  font-family: var(--ff-body); font-size: 14px; font-weight: 500;
+  border: 1px solid var(--br);
+  background: var(--sf2); color: var(--t);
+}
+.wt-btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.wt-skip {
+  background: none; border: none; color: var(--m);
+  cursor: pointer; font-size: 13px; min-height: 44px; padding: 0 8px;
+}
+
+/* ---- Modal (models guide, about) ---- */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8,10,14,0.7);
+  z-index: 950;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 40px 20px; overflow-y: auto;
+}
+.modal-card {
+  background: var(--sf);
+  border: 1px solid var(--br);
+  border-radius: 18px;
+  width: 100%; max-width: 680px;
+  padding: 28px 30px;
+}
+.modal-card h2 { font-family: var(--ff-display); margin: 0 0 4px; font-size: 24px; }
+.modal-card h3 { font-size: 16px; margin: 20px 0 6px; }
+.modal-card p { color: var(--t); }
+.model-row {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 8px 16px; align-items: start;
+  padding: 14px 0; border-bottom: 1px solid var(--br);
+}
+.model-name { font-weight: 600; }
+.model-meta { font-family: var(--ff-mono); font-size: 12px; color: var(--m); text-align: right; }
+.model-note { font-size: 13px; color: var(--m); grid-column: 1 / -1; }
+
+/* ---- Focus geometry. Always visible for keyboard users, suppressed for
+   mouse users so the ring appears only when it does work. WCAG 2.4.7. ---- */
+*:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+*:focus:not(:focus-visible) { outline: none; }
+
+/* Node and mark focus inside the SVG gets its own visible treatment because
+   an outline on an SVG element does not always render. */
+.node-hit:focus-visible { outline: none; }
+.node-hit:focus-visible + .node-ring { stroke: var(--focus); stroke-width: 3; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---- Plot grid: two figures side by side on wide screens, stacked on narrow.
+   Each design shows two complementary views rather than one. ---- */
+.plot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+@media (max-width: 720px) { .plot-grid { grid-template-columns: 1fr; } }
+
+/* ---- Data format guide: a small schema table with example rows, so a person
+   bringing their own file can see exactly what shape it must take. ---- */
+.guide-box {
+  background: var(--sf); border: 1px solid var(--br);
+  border-radius: 12px; padding: 16px 18px; margin-top: 12px;
+}
+.guide-box h4 { margin: 0 0 8px; font-size: 14px; }
+.schema-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+.schema-table th, .schema-table td {
+  text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--br);
+  font-family: var(--ff-mono); font-size: 12px;
+}
+.schema-table th { color: var(--m); text-transform: uppercase; letter-spacing: 0.04em; }
+.schema-req { color: var(--treat); }
+
+/* ---- Interactive controls in the sidebar (caliper slider) ---- */
+.control-row { margin: 12px 0; }
+.control-row label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.control-row input[type="range"] { width: 100%; accent-color: var(--accent); min-height: 24px; }
+.control-val { font-family: var(--ff-mono); font-size: 12px; color: var(--accent); }
+
+/* ---- Secondary buttons row ---- */
+.btn-row { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+.ghost-btn {
+  min-height: 44px; padding: 0 16px;
+  background: none; color: var(--t);
+  border: 1px solid var(--br); border-radius: 10px;
+  cursor: pointer; font-family: var(--ff-body); font-size: 14px; font-weight: 500;
+  transition: background 0.15s;
+}
+.ghost-btn:hover { background: var(--sf2); }
+.ghost-btn.danger { color: var(--bad); border-color: var(--bad); }
+.ghost-btn.danger:hover { background: var(--bad); color: var(--bg); }
+
+/* The sensitivity readout, a compact stat with its plain reading. */
+.sens-strip {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 14px 16px; margin-bottom: 14px;
+  background: var(--sf2); border: 1px solid var(--br); border-radius: 12px;
+}
+.sens-num {
+  font-family: var(--ff-display); font-size: 30px; font-weight: 600;
+  color: var(--accent);
+}
+.sens-lbl { font-size: 13px; color: var(--m); }
+
+/* ---- Header refinement ----
+   The brand leads. The three reference buttons are quiet text so they do not
+   compete with it, and the appearance controls sit together on the right as a
+   single cluster rather than a row of equal weight boxes. */
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-rule {
+  width: 1px; height: 20px; background: var(--br); display: inline-block;
+}
+.header-tools { display: flex; align-items: center; gap: 4px; }
+.header-appearance {
+  display: flex; align-items: center; gap: 10px;
+  padding-left: 16px; margin-left: 4px;
+  border-left: 1px solid var(--br);
+}
+.textbtn {
+  min-height: 44px; padding: 0 12px;
+  background: none; border: none; color: var(--m);
+  font-family: var(--ff-body); font-size: 14px; font-weight: 500;
+  cursor: pointer; border-radius: 8px;
+  transition: color 0.15s, background 0.15s;
+}
+.textbtn:hover { color: var(--t); background: var(--sf2); }
+
+.sidebar-foot {
+  margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--br);
+  font-size: 11px; color: var(--m); font-family: var(--ff-mono);
+}
+
+/* ---- Result design tag and notation, given real presence at the top of a
+   reading so the SCC frame is the first thing read, not an afterthought. ---- */
+.result-designtag { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.rd-label {
+  font-family: var(--ff-mono); font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--m);
+}
+.rd-name { font-family: var(--ff-display); font-size: 17px; color: var(--t); }
+.notation-host.result-notation {
+  background: var(--sf); border: 1px solid var(--br);
+  border-radius: 12px; padding: 16px 18px; margin-bottom: 6px;
+}
+
+/* ---- The plain to adjusted contrast, with an arrow between the two figures
+   so the movement reads as one gesture rather than two separate tiles. ---- */
+.contrast-row { display: flex; align-items: stretch; gap: 12px; }
+.contrast-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--m); flex-shrink: 0;
+}
+.contrast-cell { flex: 1; }
+
+/* Plot hosts hold their height before the svg mounts so the layout does not
+   jump as figures arrive. */
+.plot-host { min-height: 220px; }
+
+/* ---- Stat strips (sensitivity and minimum detectable effect) ---- */
+.stat-strip {
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 14px 16px; margin-bottom: 12px;
+  background: var(--sf2); border: 1px solid var(--br); border-radius: 12px;
+}
+.stat-num {
+  font-family: var(--ff-display); font-size: 30px; font-weight: 600;
+  color: var(--accent); flex-shrink: 0; line-height: 1;
+}
+.stat-lbl { font-size: 13px; color: var(--m); line-height: 1.5; }
+
+/* ---- Detection note: shown after a file is read, naming the guessed design
+   and inviting a change. Confidence tints the left edge without carrying
+   meaning on color alone, since the words state the confidence too. ---- */
+.detect-note {
+  margin: 10px 0 4px; padding: 12px 14px;
+  background: var(--sf2); border: 1px solid var(--br);
+  border-left: 3px solid var(--accent); border-radius: 10px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.detect-note.conf-high { border-left-color: var(--good); }
+.detect-note.conf-medium { border-left-color: var(--warn); }
+.detect-note.conf-low { border-left-color: var(--m); }
+.dn-head { font-weight: 600; font-size: 13px; }
+.dn-reason { font-size: 12px; color: var(--m); line-height: 1.45; }
+.dn-tip { font-size: 12px; color: var(--accent); }
+
+/* Number inputs match the rest of the field controls. */
+.field input[type="number"] {
+  width: 100%; min-height: 44px;
+  background: var(--sf2); color: var(--t);
+  border: 1px solid var(--br); border-radius: 10px;
+  padding: 10px 12px; font-family: var(--ff-body); font-size: 14px;
+}
+
+/* ---- Identification banner: the key assumption check, always shown with the
+   effect. Calm when it passes, a warning when it does not. Meaning rides on the
+   shape of the mark and the words, not on color alone. ---- */
+.ident-banner {
+  margin: 4px 0 18px; padding: 14px 16px;
+  border: 1px solid var(--br); border-radius: 12px;
+  border-left-width: 4px;
+}
+.ident-ok { background: var(--sf2); border-left-color: var(--good); }
+.ident-warn { background: rgba(210, 160, 40, 0.12); border-left-color: var(--warn); }
+.ident-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.ident-name { font-weight: 600; font-size: 14px; }
+.ident-msg { font-size: 13px; color: var(--m); line-height: 1.5; }
+.ident-mark {
+  width: 18px; height: 18px; flex-shrink: 0; border-radius: 50%;
+  display: inline-block; position: relative;
+}
+.ident-mark.check { background: var(--good); }
+/* A check mark set as two strokes, so the pass reads without relying on green. */
+.ident-mark.check::after {
+  content: ''; position: absolute; left: 6px; top: 3px;
+  width: 4px; height: 8px; border: solid var(--bg);
+  border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+.ident-mark.hold { background: var(--warn); }
+/* An exclamation for the warning, again a shape not just a hue. */
+.ident-mark.hold::after {
+  content: ''; position: absolute; left: 8px; top: 4px;
+  width: 2px; height: 7px; background: var(--bg);
+  box-shadow: 0 9px 0 var(--bg);
+}
+
+/* ---- Current design card in the sidebar. Short, with the notation visible and
+   a change button that opens the grouped chooser. ---- */
+.current-design {
+  background: var(--sf2); border: 1px solid var(--br);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px; padding: 12px 14px;
+}
+.cd-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.cd-name { font-weight: 600; font-size: 14px; line-height: 1.3; }
+.cd-change {
+  flex-shrink: 0; min-height: 44px; padding: 0 12px;
+  background: none; border: 1px solid var(--br); border-radius: 8px;
+  color: var(--accent); font-family: var(--ff-body); font-size: 13px;
+  font-weight: 500; cursor: pointer;
+}
+.cd-change:hover { background: var(--br); color: var(--t); }
+.cd-sub { font-size: 12px; color: var(--m); margin-top: 4px; line-height: 1.45; }
+
+/* ---- The grouped design chooser. Hidden until asked for, then a centered
+   panel over a dimmed page, with the designs under the group names the text
+   uses. ---- */
+.chooser {
+  display: none; position: fixed; inset: 0; z-index: 950;
+  background: rgba(8, 10, 14, 0.72);
+  padding: 24px;
+  overflow-y: auto;
+}
+.chooser.open { display: flex; align-items: flex-start; justify-content: center; }
+.chooser-panel {
+  background: var(--sf); border: 1px solid var(--br); border-radius: 18px;
+  width: 100%; max-width: 760px; margin: auto;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+}
+.chooser-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; padding: 22px 24px 14px; border-bottom: 1px solid var(--br);
+}
+.chooser-head h2 { margin: 0 0 4px; font-family: var(--ff-display); font-size: 22px; }
+.chooser-sub { font-size: 13px; color: var(--m); line-height: 1.5; }
+.chooser-x {
+  flex-shrink: 0; min-height: 44px; padding: 0 14px;
+  background: var(--sf2); border: 1px solid var(--br); border-radius: 10px;
+  color: var(--t); font-family: var(--ff-body); font-size: 14px; cursor: pointer;
+}
+.chooser-x:hover { background: var(--br); }
+.chooser-body { padding: 18px 24px 24px; }
+
+.chooser-group { margin-bottom: 22px; }
+.cg-head { margin-bottom: 10px; }
+.cg-name {
+  display: block; font-family: var(--ff-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent);
+}
+.cg-note { display: block; font-size: 12px; color: var(--m); margin-top: 3px; line-height: 1.45; }
+.cg-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 640px) { .cg-items { grid-template-columns: 1fr; } }
+
+/* The notation line inside a chooser option, set in mono so the O and X read
+   as the symbols they are. */
+.d-notation {
+  display: block; font-family: var(--ff-mono); font-size: 12px;
+  color: var(--accent); margin: 4px 0 2px; letter-spacing: 0.06em;
+}
+/* Strength is carried by a small left rule and stated in the words, never by
+   color alone. */
+.design-opt.strength-none { border-left: 3px solid var(--bad); }
+.design-opt.strength-weak { border-left: 3px solid var(--warn); }
+.design-opt.strength-moderate { border-left: 3px solid var(--m); }
+.design-opt.strength-strong { border-left: 3px solid var(--good); }

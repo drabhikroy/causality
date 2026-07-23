@@ -1,0 +1,20 @@
+# R session and history
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Node, used only by the browser test suite
+node_modules/
+package-lock.json
+
+# Logs and scratch output
+*.log
+/tmp/
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
