@@ -1,11 +1,6 @@
 # Causality
 
-<!-- Badges follow the usual R project convention: language, license, status. -->
-[![R](https://img.shields.io/badge/built%20with-R-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
-[![Shiny](https://img.shields.io/badge/Shiny-app-447099)](https://shiny.posit.co/)
-[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-lightgrey)](LICENSE.md)
-
-Effects from studies you could not randomize.
+Structured comparisons without random assignment.
 
 Causality is a workbench for quasi-experimental analysis, written in R and Shiny.
 It answers one kind of question: did a program, a policy, or a change actually
@@ -16,10 +11,6 @@ and every design here is a way to stand in for that missing half.
 
 The app runs entirely on your machine. Nothing is uploaded, and every statistic is
 computed locally by code you can read.
-
-## Screenshot
-
-![The Causality operator view, with the detection settings panel open and no data loaded yet](docs/screenshot-operator.png)
 
 ## Eight designs, grouped as the standard text groups them
 
@@ -151,6 +142,18 @@ www/plots.js          the figures, built as SVG by hand
 data/                 example CSVs, one per design
 tests/                the five suites
 ```
+
+## Contributing
+
+Issues and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) covers
+the test gate, the writing and accessibility conventions the sweeps enforce, and
+the full checklist for adding a study design.
+
+## Citing
+
+If this software supports published work, please cite it. GitHub reads
+[CITATION.cff](CITATION.cff) and offers a formatted citation from the sidebar of
+the repository page.
 
 ## Scope
 

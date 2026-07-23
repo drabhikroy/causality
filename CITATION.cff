@@ -1,26 +1,35 @@
-cff-version: 0.7.0
+cff-version: 1.2.0
 title: "Causality: reading effects from studies you could not randomize"
 message: "If you use this software, please cite it as below."
 type: software
 authors:
   - family-names: Roy
     given-names: Abhik
+    orcid: "https://orcid.org/0000-0002-7085-8964"
 repository-code: "https://github.com/drabhikroy/causality"
-orcid: 0000-0002-7085-8964
 abstract: >-
-  An open source R Shiny application for reviewing operational time series.
-  Classical, transparent methods learn the ordinary rhythm of a series and
-  point at the moments that break it, with plain language readings for
-  operators and exposed method internals for researchers. An optional
-  language model running on the same machine adds interpretation without
-  changing any number.
+  An open source R Shiny application for quasi-experimental analysis. Eight
+  designs from Shadish, Cook, and Campbell are implemented with their standard
+  notation, from one group posttest only through matched comparison,
+  difference in differences, interrupted time series, regression discontinuity,
+  and instrumental variables. Each result pairs the plain comparison with the
+  adjusted estimate and carries an identification check for the assumption its
+  design rests on, including a plain refusal to identify an effect where the
+  design cannot support one. Estimators are written in base R and dplyr so
+  every number traces to readable code, and all computation stays on the local
+  machine. An optional language model running on the same machine restates a
+  finished result in plainer words without changing any number.
 keywords:
   - quasi experimental
+  - causal inference
+  - propensity score matching
+  - difference in differences
   - interrupted time series
   - regression discontinuity
+  - instrumental variables
   - R
   - Shiny
   - program evaluation
 license: PolyForm-Noncommercial-1.0.0
-version: 0.2.0
+version: 0.7.0
 date-released: "2026-07-23"

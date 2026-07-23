@@ -1,4 +1,4 @@
-# Causality: reading effects from studies you could not randomize.
+# Causality: structured comparisons without random assignment.
 # Required Notice: Copyright Abhik Roy
 # Licensed under the PolyForm Noncommercial License 1.0.0. See LICENSE.md.
 
@@ -29,8 +29,8 @@ source("R/refute.R")
 source("R/export.R")
 source("R/modals.R")
 
-APP_VERSION <- "0.7.0"
-APP_NAME <- "Causality"
+app_name <- "Causality"
+app_version <- "0.7.1"
 
 # The designs the app can run, in the order they appear in the picker. Each is
 # a quasi-experimental design from Shadish, Cook, and Campbell, paired with the
@@ -207,6 +207,17 @@ window.Causality = (function () {
 
     var acts = document.createElement('div');
     acts.className = 'wt-actions';
+    // Skip sits to the left of the other actions on every slide but the last,
+    // where the primary action already closes the tour. Without it the only
+    // ways out were the Escape key and a click on the backdrop, neither of
+    // which is visible to someone who has not been told about them.
+    if (!last) {
+      var skip = document.createElement('button');
+      skip.className = 'wt-btn quiet';
+      skip.textContent = 'Skip';
+      skip.onclick = function () { tourClose(); };
+      acts.appendChild(skip);
+    }
     if (tourIdx > 0) {
       var back = document.createElement('button');
       back.className = 'wt-btn';
@@ -316,7 +327,7 @@ ui <- fluidPage(
     div(class = "brand",
       span(class = "brand-mark", "Causality"),
       span(class = "brand-rule"),
-      span(class = "brand-tag", "effects from studies you could not randomize")
+      span(class = "brand-tag", "structured comparisons without random assignment")
     ),
     div(class = "header-spacer"),
     div(class = "header-tools",
@@ -367,11 +378,11 @@ ui <- fluidPage(
         actionButton("reset", "Reset", class = "ghost-btn danger")
       ),
       div(class = "sidebar-foot", HTML(paste0(
-          APP_NAME, " ", APP_VERSION, ". Built with ",
+          app_name, " ", app_version, ". Built with ",
           '<a href="https://www.r-project.org" target="_blank" ',
           'rel="noopener">R</a> and ',
           '<a href="https://shiny.posit.co" target="_blank" ',
-          'rel="noopener">Shiny</a>, using dplyr. Copyright Abhik Roy, released under the ',
+          'rel="noopener">Shiny</a>. Copyright Abhik Roy, released under the ',
           '<a href="https://polyformproject.org/licenses/noncommercial/1.0.0" ',
           'target="_blank" rel="noopener">PolyForm Noncommercial ',
           "License 1.0.0</a>.")))
