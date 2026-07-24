@@ -103,5 +103,29 @@ const twoGroup = window.CausalityNotation.diagram('matching', {});
 check('two group design has the nonequivalence rule',
   twoGroup.querySelectorAll('line[stroke-dasharray]').length === 1);
 
+// Skip must be present on every slide but the last, where the primary action
+// already closes the tour, and it must leave immediately from wherever it sits.
+window.Causality.openTour();
+const skipBtn = window.document.querySelector('.wt-btn.quiet');
+check('skip button offered on the first slide',
+  !!skipBtn && skipBtn.textContent === 'Skip');
+skipBtn.click();
+check('skip closes the tour at once', !window.document.querySelector('.wt-overlay'));
+
+window.Causality.openTour();
+window.document.querySelector('.wt-btn.primary').click();
+const midSkip = window.document.querySelector('.wt-btn.quiet');
+check('skip still offered partway through', !!midSkip);
+midSkip.click();
+check('skip closes from a middle slide', !window.document.querySelector('.wt-overlay'));
+
+window.Causality.openTour();
+for (let i = 0; i < dots - 1; i++) {
+  window.document.querySelector('.wt-btn.primary').click();
+}
+check('skip is withdrawn on the final slide',
+  !window.document.querySelector('.wt-btn.quiet'));
+window.document.querySelector('.wt-btn.primary').click();
+
 console.log('\nDOM: ' + fails + ' failures');
 process.exit(fails > 0 ? 1 : 0);

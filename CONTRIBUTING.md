@@ -22,7 +22,9 @@ the standard text is what lets a reader trust the labels.
 shiny::runApp(".", launch.browser = TRUE)
 ```
 
-Requires R 4.1 or later with shiny, dplyr, tidyr, purrr, readr, and jsonlite.
+Requires R 4.1 or later with shiny, dplyr, tidyr, purrr, readr, tibble, and
+jsonlite. The optional local model layer also uses httr, and the app runs
+without it.
 
 ## Running the tests
 

@@ -30,7 +30,7 @@ source("R/export.R")
 source("R/modals.R")
 
 app_name <- "Causality"
-app_version <- "0.7.1"
+app_version <- "0.7.2"
 
 # The designs the app can run, in the order they appear in the picker. Each is
 # a quasi-experimental design from Shadish, Cook, and Campbell, paired with the

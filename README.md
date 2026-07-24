@@ -12,6 +12,8 @@ and every design here is a way to stand in for that missing half.
 The app runs entirely on your machine. Nothing is uploaded, and every statistic is
 computed locally by code you can read.
 
+![The Causality reading panel, showing a matched comparison result](docs/screenshot-operator.png)
+
 ## Eight designs, grouped as the standard text groups them
 
 The designs, their names, and their notation follow Shadish, Cook, and Campbell,
@@ -68,11 +70,13 @@ reruns the analysis in plain base R so the pipeline leaves the app reproducible.
 
 ## Running it
 
-Causality needs R with `shiny`, `dplyr`, `tidyr`, `purrr`, `readr`, and
-`jsonlite`.
+Causality needs R 4.1 or later with `shiny`, `dplyr`, `tidyr`, `purrr`, `readr`,
+`tibble`, and `jsonlite`. The optional local model layer also uses `httr`, and
+the app runs without it.
 
 ```r
-install.packages(c("shiny", "dplyr", "tidyr", "purrr", "readr", "jsonlite"))
+install.packages(c("shiny", "dplyr", "tidyr", "purrr", "readr", "tibble",
+                   "jsonlite"))
 ```
 
 From the project folder:
@@ -140,6 +144,7 @@ www/app.css           design system, themes, and color settings
 www/notation.js       design notation diagrams
 www/plots.js          the figures, built as SVG by hand
 data/                 example CSVs, one per design
+docs/                 screenshots used by the README
 tests/                the five suites
 ```
 
@@ -148,6 +153,10 @@ tests/                the five suites
 Issues and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) covers
 the test gate, the writing and accessibility conventions the sweeps enforce, and
 the full checklist for adding a study design.
+
+## Changes
+
+Release history is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Citing
 

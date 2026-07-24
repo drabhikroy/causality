@@ -773,3 +773,12 @@ body {
 .design-opt.strength-weak { border-left: 3px solid var(--warn); }
 .design-opt.strength-moderate { border-left: 3px solid var(--m); }
 .design-opt.strength-strong { border-left: 3px solid var(--good); }
+
+/* The tour footer. Actions sit to the right of the progress dots, and Skip is
+   deliberately quieter than Back and Next: it is an exit, not a step, and
+   should not compete with the path through the tour. */
+.wt-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.wt-btn.quiet {
+  background: none; border-color: transparent; color: var(--m);
+}
+.wt-btn.quiet:hover { color: var(--t); border-color: var(--br); }
