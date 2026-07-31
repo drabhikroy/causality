@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="currentColor">
+  <!-- Single color throughout, so the icon reads correctly whether the
+       surrounding page is in light or dark mode. The X keeps its weight as
+       the visual anchor; the dashed rule uses the same color at reduced
+       opacity rather than a second color, since currentColor is the only
+       color this variant is allowed to use. -->
+  <g font-family="'IBM Plex Mono', ui-monospace, monospace" font-weight="600">
+    <text x="7"  y="19" font-size="12">O</text>
+    <text x="20" y="20" font-size="15">X</text>
+    <text x="34" y="19" font-size="12">O</text>
+
+    <line x1="4" y1="26" x2="44" y2="26" stroke="currentColor" stroke-width="2"
+          stroke-dasharray="3.5 3.5" stroke-linecap="round" opacity="0.55"/>
+
+    <text x="7"  y="38" font-size="12" opacity="0.75">O</text>
+    <text x="34" y="38" font-size="12" opacity="0.75">O</text>
+  </g>
+</svg>

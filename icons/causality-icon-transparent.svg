@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- Two rows of the Shadish, Cook, and Campbell design notation: a treated
+       group (amber, with the X) above an untreated comparison group (blue),
+       joined by the dashed rule that marks them as nonequivalent. This is the
+       diagram shown at the top of every Causality result, so the icon is the
+       app's own signature rather than a separate mark. -->
+  <g font-family="'IBM Plex Mono', ui-monospace, monospace" font-weight="600">
+    <!-- treated row: O X O -->
+    <text x="7"  y="19" font-size="12" fill="#5aa9e6">O</text>
+    <text x="20" y="20" font-size="15" fill="#e8833a">X</text>
+    <text x="34" y="19" font-size="12" fill="#e8833a">O</text>
+
+    <!-- dashed nonequivalence rule -->
+    <line x1="4" y1="26" x2="44" y2="26" stroke="#8a8f9c" stroke-width="2"
+          stroke-dasharray="3.5 3.5" stroke-linecap="round"/>
+
+    <!-- comparison row: O _ O -->
+    <text x="7"  y="38" font-size="12" fill="#5aa9e6">O</text>
+    <text x="34" y="38" font-size="12" fill="#5aa9e6">O</text>
+  </g>
+</svg>
