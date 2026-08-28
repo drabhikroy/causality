@@ -1,6 +1,8 @@
 # Causality
 
-## Structured comparisons without random assignment.
+[![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
+[![Shiny](https://img.shields.io/badge/Shiny-R-276DC3?logo=r&logoColor=white)](#requirements)
+[![Release](https://img.shields.io/badge/release-v0.7.2-blue)](https://github.com/drabhikroy/rank-and-folder/releases/tag/v0.7.2)
 
 Causality is an R Shiny application for quasi-experimental analysis. It
 helps researchers examine whether a program, policy, or change may have
