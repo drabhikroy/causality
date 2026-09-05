@@ -27,7 +27,10 @@ into the page.
 
 Open a private security advisory through the repository, or open a
 normal issue if the problem is not sensitive. Please include the
-version, what you did, and what you saw.
+version, what you did, and what you saw. There is no account and
+nothing leaves this machine except to a local model you would have
+had to set up yourself, so a report here is about the code rather
+than about an incident.
 
 ## Scope
 
